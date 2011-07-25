@@ -1,0 +1,3 @@
+=== GolfStats ===
+
+GolfStats on golfkierrosten ja pelitulosten kirjaus- ja arkistointijärjestelmä. Jokaisen pelatun kierroksen jälkeen (tai sen aikana) käyttäjä kirjaa suorituksensa, järjestelmä laskee lyönnit ja bogeypisteet, sekä tarjoaa statistiikkaa syötettyjen tietojen perusteella.
