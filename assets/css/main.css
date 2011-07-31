@@ -1,27 +1,58 @@
 
 body {
-	background: #fdfdfd;
-	font-family: Arial, sans-serif;
+    background: #fdfdfd;
+    font-family: Arial, sans-serif;
 }
+
+#header-wrapper {
+    margin: 10px auto auto;
+    width: 600px;
+}
+
+    #header {
+        background: #f8ffea;
+        border: 3px solid #aad944;
+        margin-bottom: 10px;
+        padding: 10px;
+        font-family: "Times New Roman", serif;
+        font-weight: bold;
+        color: #aad944;
+        text-align: center;
+    }
+        #header a {
+            color: #7aa930;
+        }
 
 #atomik-wrapper {
-	margin: 50px auto auto;
-	text-align: right;
-	width: 50%;
+    margin: 10px auto auto;
+    width: 960px;
+}
+    
+    #atomik {
+        background: #f8ffea;
+        border: 3px solid #aad944;
+        margin-bottom: 10px;
+        padding: 10px;
+        font-size: small;
+    }
+    
+        #atomik h1 {
+            color: #5f5f5f;
+        }
+        
+    #atomik-wrapper img {
+        border: 0;
+    }
+
+.crslope {
+    border-collapse: collapse;
 }
 
-	#atomik {
-		background: #f8ffea;
-		border: 3px solid #aad944;
-		margin-bottom: 10px;
-		padding: 10px;
-		text-align: left;
-	}
-	
-		#atomik h1 {
-			color: #5f5f5f;
-		}
-		
-	#atomik-wrapper img {
-		border: 0;
-	}
+    .crslope td {
+        border: 0px;
+        width: 80px;
+    }
+    
+    .crslope input {
+        width: 80px;
+    }

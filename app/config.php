@@ -18,13 +18,11 @@ Atomik::set(array (
     'catch_errors' => true,
     'display_errors' => true,
     'debug' => false,
+    'url_rewriting' => true,
   ),
   'styles' => 
   array (
     0 => 'assets/css/main.css',
-  ),
-  'plugins' => 
-  array (
   ),
   'scripts' => 
   array (
@@ -33,7 +31,7 @@ Atomik::set(array (
   'plugins/Db' =>
   array(
     'dsn' 	    => 'mysql:host=localhost;dbname=golfstats',
-    'username' 	=> 'user',
-    'password' 	=> 'password'
+    'username' 	=> 'guser',
+    'password' 	=> ''
   )
 ));
