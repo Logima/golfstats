@@ -1,0 +1,51 @@
+<h3>Muokkaa kenttää <?php echo $tiedot['nimi']; ?></h3><br />
+<form action="" method="post">
+<b>Nimi:</b> <input type="text" name="nimi" value="<?php echo $tiedot['nimi']; ?>" /><br /><br />
+<b>CR ja Slope (muodossa CR/Slope):</b><br />
+<table class="crslope">
+<tr>
+<td></td>
+<td>Miehet</td>
+<td>Naiset</td>
+</tr>
+<tr>
+<td style="background-color: white;"></td>
+<td><input type="text" name="crslopemv" value="<?php echo $tiedot['crslopemv']; ?>" /></td>
+<td></td>
+</tr>
+<tr>
+<td style="background-color: yellow;"></td>
+<td><input type="text" name="crslopemk" value="<?php echo $tiedot['crslopemk']; ?>" /></td>
+<td><input type="text" name="crslopenk" value="<?php echo $tiedot['crslopenk']; ?>" /></td>
+</tr>
+<tr>
+<td style="background-color: blue;"></td>
+<td><input type="text" name="crslopems" value="<?php echo $tiedot['crslopems']; ?>" /></td>
+<td><input type="text" name="crslopens" value="<?php echo $tiedot['crslopens']; ?>" /></td>
+</tr>
+<tr>
+<td style="background-color: red;"></td>
+<td><input type="text" name="crslopemp" value="<?php echo $tiedot['crslopemp']; ?>" /></td>
+<td><input type="text" name="crslopenp" value="<?php echo $tiedot['crslopenp']; ?>" /></td>
+</tr>
+</table><br />
+<b>Väylät</b>
+<table class="vaylalista">
+<tr>
+<td>Numero</td>
+<td>Par</td>
+<td>HCP</td>
+</tr>
+<?php
+for($i=1;$i<19;$i++) {
+  echo '
+    <tr>
+      <td>' . $i . '</td>
+      <td><input type="text" name="vayla_' . $i . '_par" value="' . ((isset($vaylienTiedot["vayla_" . $i . "_par"])) ? $vaylienTiedot["vayla_" . $i . "_par"] : '') . '" /></td>
+      <td><input type="text" name="vayla_' . $i . '_hcp" value="' . ((isset($vaylienTiedot["vayla_" . $i . "_hcp"])) ? $vaylienTiedot["vayla_" . $i . "_hcp"] : '') . '" />
+    </tr>';
+}
+?>
+  </table><br />
+  <input type="submit" value="Lähetä" />
+</form>

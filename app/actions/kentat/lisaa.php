@@ -26,7 +26,3 @@ $kenttienNimet = array('nimi', 'crslopemv', 'crslopemk', 'crslopenk', 'crslopems
 foreach ($kenttienNimet as $knimi) {
   if (!isset($sanitoidutTiedot[$knimi])) $sanitoidutTiedot[$knimi] = "";
 }
-for ($i = 1; $i < 19; $i++) {
-  if (!isset($sanitoidutVaylat['vayla_' . $i . '_par'])) $sanitoidutVaylat['vayla_' . $i . '_par'] = "";
-  if (!isset($sanitoidutVaylat['vayla_' . $i . '_hcp'])) $sanitoidutVaylat['vayla_' . $i . '_hcp'] = "";
-}

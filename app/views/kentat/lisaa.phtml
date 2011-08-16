@@ -41,8 +41,8 @@
   	echo '
     <tr>
       <td>' . $i . '</td>
-      <td><input type="text" name="vayla_' . $i . '_par" value="' . $sanitoidutVaylat["vayla_" . $i . "_par"] . '" /></td>
-      <td><input type="text" name="vayla_' . $i . '_hcp" value="' . $sanitoidutVaylat["vayla_" . $i . "_hcp"] . '" />
+      <td><input type="text" name="vayla_' . $i . '_par" value="' . ((isset($sanitoidutVaylat["vayla_" . $i . "_par"])) ? $sanitoidutVaylat["vayla_" . $i . "_par"] : '') . '" /></td>
+      <td><input type="text" name="vayla_' . $i . '_hcp" value="' . ((isset($sanitoidutVaylat["vayla_" . $i . "_hcp"])) ? $sanitoidutVaylat["vayla_" . $i . "_hcp"] : '') . '" />
     </tr>';
   }
   ?>
