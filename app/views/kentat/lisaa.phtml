@@ -1,7 +1,7 @@
-<b>Lisää kenttä:</b><br />
+<h3>Lisää kenttä:</h3><br />
 <form action="" method="post">
-  Nimi: <input type="text" name="nimi" /><br />
-  CR ja Slope (muodossa CR/Slope):<br />
+  <b>Nimi:</b> <input type="text" name="nimi" value="<?php echo $sanitoidutTiedot['nimi']; ?>" /><br /><br />
+  <b>CR ja Slope (muodossa CR/Slope):</b><br />
   <table class="crslope">
     <tr>
       <td></td>
@@ -10,24 +10,42 @@
     </tr>
     <tr>
       <td style="background-color: white;"></td>
-      <td><input type="text" name="crslopemv" /></td>
+      <td><input type="text" name="crslopemv" value="<?php echo $sanitoidutTiedot['crslopemv']; ?>" /></td>
       <td></td>
     </tr>
     <tr>
       <td style="background-color: yellow;"></td>
-      <td><input type="text" name="crslopemk" /></td>
-      <td><input type="text" name="crslopenk" /></td>
+      <td><input type="text" name="crslopemk" value="<?php echo $sanitoidutTiedot['crslopemk']; ?>" /></td>
+      <td><input type="text" name="crslopenk" value="<?php echo $sanitoidutTiedot['crslopenk']; ?>" /></td>
     </tr>
     <tr>
       <td style="background-color: blue;"></td>
-      <td><input type="text" name="crslopems" /></td>
-      <td><input type="text" name="crslopens" /></td>
+      <td><input type="text" name="crslopems" value="<?php echo $sanitoidutTiedot['crslopems']; ?>" /></td>
+      <td><input type="text" name="crslopens" value="<?php echo $sanitoidutTiedot['crslopens']; ?>" /></td>
     </tr>
     <tr>
       <td style="background-color: red;"></td>
-      <td><input type="text" name="crslopemp" /></td>
-      <td><input type="text" name="crslopenp" /></td>
+      <td><input type="text" name="crslopemp" value="<?php echo $sanitoidutTiedot['crslopemp']; ?>" /></td>
+      <td><input type="text" name="crslopenp" value="<?php echo $sanitoidutTiedot['crslopenp']; ?>" /></td>
     </tr>
+  </table><br />
+  <b>Väylät</b>
+  <table class="vaylalista">
+    <tr>
+      <td>Numero</td>
+      <td>Par</td>
+      <td>HCP</td>
+    </tr>
+  <?php
+  for($i=1;$i<19;$i++) {
+  	echo '
+    <tr>
+      <td>' . $i . '</td>
+      <td><input type="text" name="vayla_' . $i . '_par" value="' . $sanitoidutVaylat["vayla_" . $i . "_par"] . '" /></td>
+      <td><input type="text" name="vayla_' . $i . '_hcp" value="' . $sanitoidutVaylat["vayla_" . $i . "_hcp"] . '" />
+    </tr>';
+  }
+  ?>
   </table><br />
   <input type="submit" value="Lähetä" />
 </form>
