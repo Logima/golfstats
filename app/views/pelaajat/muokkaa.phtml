@@ -1,0 +1,43 @@
+<script type="text/javascript">
+<!--
+var tasoitusNro = <?php echo $tasoitusMaara; ?>;
+function lisaaRivi() {
+  $('#tasoitus').append('<tr><td><input type="text" name="tasoitus_' + tasoitusNro + '" /></td><td><input type="text" name="pvm_' + tasoitusNro + '" value="<?php echo date("j.n.Y"); ?>" /></td></tr>');
+  tasoitusNro++;
+}
+//-->
+</script>
+
+<h3>Muokkaa pelaajaa <?php echo $kentat['nimi']; ?></h3><br />
+<form action="" method="post">
+  <div>
+    <b>Nimi:</b> <input type="text" name="nimi" value="<?php echo $kentat['nimi']; ?>" /><br /><br />
+    <b>Sukupuoli:</b><br />
+    <input type="radio" name="sukupuoli" value="nainen" <?php if ($kentat['sukupuoli'] == 'nainen') echo 'checked="checked" '; ?>/> Nainen<br />
+    <input type="radio" name="sukupuoli" value="mies" <?php if ($kentat['sukupuoli'] == 'mies') echo 'checked="checked" '; ?>/> Mies<br /><br />
+    
+    <b>Tasoitushistoria</b><br />
+    (Päivämäärät muodossa d.m.yyyy)<br />
+    <table class="table-simppeli" id="tasoitus">
+      <tr>
+        <td>Tasoitus</td>
+        <td>Milloin tullut voimaan</td>
+      </tr>
+      <tr>
+        <td>54</td>
+        <td>-</td>
+      </tr>
+<?php 
+for ($i = 0; $i < $tasoitusMaara; $i++) {
+  echo '      <tr>
+        <td><input type="text" name="tasoitus_' . $i . '" value="' . $kentat['tasoitus_' . $i] . '" /></td>
+        <td><input type="text" name="pvm_' . $i . '" value="' . $kentat['pvm_' . $i] . '" /></td>
+      </tr>
+';
+}
+?>
+    </table>
+    <input type="button" value="Lisää tasoitus" onclick="lisaaRivi();" /><br /><br />
+    <input type="submit" value="Lähetä" />
+  </div>
+</form>

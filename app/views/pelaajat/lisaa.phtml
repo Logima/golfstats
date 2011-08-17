@@ -16,7 +16,7 @@ function lisaaRivi() {
     <input type="radio" name="sukupuoli" value="nainen" <?php if (!isset($kentat[1]['sukupuoli']) || $kentat[1]['sukupuoli'] == 'nainen') echo 'checked="checked" '; ?>/> Nainen<br />
     <input type="radio" name="sukupuoli" value="mies" <?php if (isset($kentat[1]['sukupuoli']) && $kentat[1]['sukupuoli'] == 'mies') echo 'checked="checked" '; ?>/> Mies<br /><br />
     
-    <b>Tasoitus</b><br />
+    <b>Tasoitushistoria</b><br />
     (Päivämäärät muodossa d.m.yyyy)<br />
     <table class="table-simppeli" id="tasoitus">
       <tr>
