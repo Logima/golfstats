@@ -1,0 +1,8 @@
+<b>Järjestelmässä olevat pelaajat:</b><br />
+<?php
+if (count($pelaajat) > 0) {
+  foreach ($pelaajat as $pelaaja) {
+    echo '<a href="' . Atomik::url('pelaajat/muokkaa', array('pelaaja' => $pelaaja['id'])) . '">' . $pelaaja['nimi'] . "</a><br />\r\n";
+  }
+} else echo "Ei pelaajia järjestelmässä<br />\r\n";
+echo '<br /><a href="' . Atomik::url("pelaajat/lisaa") . '">Lisää pelaaja</a>';

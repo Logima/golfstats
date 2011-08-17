@@ -20,13 +20,15 @@
         <a href="<?php echo Atomik::url('pelaajat') ?>">Pelaajat</a>
       </div>
     </div>
+    <?php if (count($f = A('flash:all')) > 0): ?>
     <ul id="messages">
-      <?php foreach (A('flash:all') as $label => $messages): ?>
+      <?php foreach ($f as $label => $messages): ?>
         <?php foreach ($messages as $message): ?>
           <li class="<?php echo $label ?>"><?php echo $message ?></li>
         <?php endforeach; ?>
       <?php endforeach; ?>
     </ul>
+    <?php endif; ?>
   
     <div id="atomik-wrapper">
       <div id="atomik">

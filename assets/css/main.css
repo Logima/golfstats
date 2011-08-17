@@ -57,10 +57,12 @@ body {
   width: 80px;
   }
 
-.vaylalista {
+.table-simppeli {
   border-collapse: collapse;
+  background: #f0fcd9;
 }
 
-  .vaylalista td {
+  .table-simppeli td {
     border: 1px solid;
+    text-align: center;
   }

@@ -4,5 +4,5 @@ if (count($kentat) > 0) {
   foreach ($kentat as $kentta) {
     echo '<a href="' . Atomik::url('kentat/muokkaa', array('kentta' => $kentta['id'])) . '">' . $kentta['nimi'] . "</a><br />\r\n";
   }
-} else echo 'Ei kenttiä järjestelmässä';
+} else echo "Ei kenttiä järjestelmässä<br />\r\n";
 echo '<br /><a href="' . Atomik::url("kentat/lisaa") . '">Lisää kenttä</a>';

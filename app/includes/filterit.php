@@ -7,7 +7,7 @@ function tarkistaKenttaSyote($post) {
     return array(false, array(), array());
   }
   $sanitoidutTiedot = filter_var_array($kentanTiedot, FILTER_SANITIZE_STRING);
-  $sanitoidutVaylat = filter_var_array(array_slice($post, 8), FILTER_VALIDATE_INT);
+  $sanitoidutVaylat = filter_var_array(array_slice($post, 8), FILTER_SANITIZE_NUMBER_INT);
   foreach ($sanitoidutTiedot as $knimi => $kentta) {
     if (strlen($kentta) < 3 || ($knimi != 'nimi' && !preg_match('/^\d+\.?\d+\/\d+$/', $kentta))) {
       Atomik::flash("Kenttiä virheellisesti täytetty.", "error");
@@ -38,3 +38,37 @@ function tarkistaKenttaSyote($post) {
   }
   return array($sanitoidutTiedot, $sanitoidutVaylat, $vaylienPar, $vaylienHcp);
 }
+
+function tarkistaPelaajaSyote($post) {
+  $post = filter_var_array($post, FILTER_SANITIZE_STRING);
+  $paivamaarat = array();
+  $tasoitukset = array();
+  foreach ($post as $knimi => $value) {
+    if (strlen($value) == 0) {
+      Atomik::flash("Kenttiä ei saa jättää tyhjiksi.", "error");
+      return array(false, $post);
+    }
+    if ($knimi == "nimi" || $knimi == "sukupuoli") continue;
+    $knimiOsat = explode('_', $knimi);
+    if ($knimiOsat[0] == "tasoitus") {
+      if (!preg_match('/^\d{1,2}(\.\d)?$/', $value)) {
+        Atomik::flash("Annettu tasoitus ei ole kelvollinen.", "error");
+        return array(false, $post);
+      } else {
+        $tasoitukset[$knimiOsat[1]] = $value;
+      }
+    }
+    if ($knimiOsat[0] == "pvm") {
+      $pvm = strtotime($value);
+      if ($pvm === false) {
+        Atomik::flash("Annettu päivämäärä ei ole kelvollinen.", "error");
+        return array(false, $post);
+      } else {
+        $paivamaarat[$knimiOsat[1]] = $pvm;
+      }
+    }
+  }
+  return array($post, $tasoitukset, $paivamaarat);
+}
+
+
