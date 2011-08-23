@@ -1,0 +1,181 @@
+<script type="text/javascript">
+<!--
+function toggleBunkkeri(pelaajaId, vayla) {
+  $('select[name=pelaaja_' + pelaajaId + '_vayla_' + vayla + '_bunkkerista]').toggle();
+}
+<?php if(isset($kentta)): ?>
+
+pelaajienNimet = new Array();
+pelaajienSukupuolet = new Array();
+<?php
+foreach ($pelaajat as $pelaaja) {
+  echo '  pelaajienNimet[' . $pelaaja['id'] . '] = \'' . $pelaaja['nimi'] . "';\r\n";
+  echo '  pelaajienSukupuolet[' . $pelaaja['id'] . '] = \'' . $pelaaja['sukupuoli'] . "';\r\n";
+}
+?>
+
+function bindKeyup() {
+  $('input[type=text]').keyup(function() {
+    var focus = $('input:focus');
+    if (focus.attr('name').substr(0, 8) == "pelaaja_" && focus.attr('value').length > 0) {
+      var split = focus.attr('name').split('_');
+      split[3]++;
+      var seuraavaKentta = $('input[name=' + split.join('_') + ']');
+      seuraavaKentta.focus();
+      seuraavaKentta.select();
+    }
+  });
+}
+
+function lisaaPelaaja() {
+  var pelaajaId = $('#pelaajat').val();
+  if(pelaajaId == null) return;
+  $('#pelaajat option:selected').remove();
+  var lisattava = '<div id="pelaaja_' + pelaajaId + '"><b>Pelaaja:</b> ' + pelaajienNimet[pelaajaId] + '\
+<div class="oikea"><a href="#" onclick="poistaPelaaja(' + pelaajaId + ')">Poista pelaaja</a></div><br />\
+<b>Tii:</b> <table class="tiivalinta"><tr>';
+  if(pelaajienSukupuolet[pelaajaId] == "mies") {
+    lisattava += '<td class="v"><input type="radio" name="pelaaja_' + pelaajaId + '_tii" value="valkoinen" /></td><td class="k"><input type="radio" name="pelaaja_' + pelaajaId + '_tii" value="keltainen" checked="checked" /></td><td class="s"><input type="radio" name="pelaaja_' + pelaajaId + '_tii" value="sininen" /></td><td class="p"><input type="radio" name="pelaaja_' + pelaajaId + '_tii" value="punainen" /></td>';
+  } else {
+    lisattava += '<td class="k"><input type="radio" name="pelaaja_' + pelaajaId + '_tii" value="keltainen" /></td><td class="s"><input type="radio" name="pelaaja_' + pelaajaId + '_tii" value="sininen" /></td><td class="p"><input type="radio" name="pelaaja_' + pelaajaId + '_tii" value="punainen" checked="checked" /></td>';
+  }
+  lisattava += '</tr></table><br />\
+<table class="table-simppeli">\
+<tr>\
+  <td class="info">Väylä</td>\
+  <td class="info">Par</td>\
+  <td class="info">HCP</td>\
+  <td>Lyönnit</td>\
+  <td>Aloituslyönti</td>\
+  <td>Greeniosuma</td>\
+  <td>Putit</td>\
+  <td>Bunkkeri</td>\
+  <td>Rankkarit</td>\
+</tr>\
+<?php 
+foreach ($vaylaInfo as $vayla) {
+echo '<tr>\
+  <td class="info">' . $vayla['numero'] . '</td>\
+  <td class="info">' . $vayla['par'] . '</td>\
+  <td class="info">' . $vayla['hcp'] . '</td>\
+  <td><input type="text" name="pelaaja_\' + pelaajaId + \'_vayla_' . $vayla['numero'] . '_lyonnit" size="2" /></td>\
+  <td><input type="radio" name="pelaaja_\' + pelaajaId + \'_vayla_' . $vayla['numero'] . '_avaus" value="vasen" />Vasen <input type="radio" name="pelaaja_\' + pelaajaId + \'_vayla_' . $vayla['numero'] . '_avaus" value="vayla" checked="checked" />Väylä <input type="radio" name="pelaaja_\' + pelaajaId + \'_vayla_' . $vayla['numero'] . '_avaus" value="oikea" />Oikea</td>\
+  <td><input type="checkbox" name="pelaaja_\' + pelaajaId + \'_vayla_' . $vayla['numero'] . '_greeniosuma" /></td>\
+  <td><input type="text" name="pelaaja_\' + pelaajaId + \'_vayla_' . $vayla['numero'] . '_putit" size="2" /></td>\
+  <td><input type="checkbox" name="pelaaja_\' + pelaajaId + \'_vayla_' . $vayla['numero'] . '_bunkkerissa" onclick="toggleBunkkeri(\' + pelaajaId + \', ' . $vayla['numero'] . ')" /><select name="pelaaja_\' + pelaajaId + \'_vayla_' . $vayla['numero'] . '_bunkkerista" class="hidden">\
+    <option value="2">Miten onnistui?</option>\
+    <option value="1">Hyvin</option>\
+    <option value="2">Kohtalaisesti</option>\
+    <option value="3">Huonosti</option>\
+    </select></td>\
+  <td><input type="text" name="pelaaja_\' + pelaajaId + \'_vayla_' . $vayla['numero'] . '_rankkari" size="2" /></td>\
+</tr>\
+';
+}
+?></table><br /></div>';
+  $('#scorecardit').append(lisattava);
+  bindKeyup();
+}
+
+function poistaPelaaja(pelaajaId) {
+  $('#pelaaja_' + pelaajaId).remove();
+  $('#pelaajat').append('<option value="' + pelaajaId + '">' + pelaajienNimet[pelaajaId] + "</option>\r\n");
+}
+
+$(document).ready(function() {
+  bindKeyup();
+});
+<?php endif; ?>
+//-->
+</script>
+
+<h3>Muokkaa kierrosta</h3>
+<form action="" method="post">
+  <div>
+    <table class="kahtiajako">
+      <tr>
+        <td>
+          <b>Kenttä:</b> <?php echo $kentta['nimi']; ?><br />
+          <b>Lähtöaika:</b> <input type="text" name="lahtoaika" value="<?php echo (isset($kentat['lahtoaika']))? $kentat['lahtoaika'] : date("j.n.Y G:i"); ?>" /><br />
+          <b>Tarkoitus:</b><br />
+          <input type="radio" name="tarkoitus" value="harjoitus" <?php if (!isset($kentat['tarkoitus']) || $kentat['tarkoitus'] == 'harjoitus') echo 'checked="checked" '; ?>/> Harjoitus<br />
+          <input type="radio" name="tarkoitus" value="kilpailu" <?php if (isset($kentat['tarkoitus']) && $kentat['tarkoitus'] == 'kilpailu') echo 'checked="checked" '; ?>/> Kilpailu<br />
+          <b>Sää:</b> <select name="saa">
+          <option value="0"<?php if (isset($kentat['saa']) && $kentat['saa'] == '0') echo ' selected="selected"'; ?>>Aurinkoinen</option>
+          <option value="1"<?php if (isset($kentat['saa']) && $kentat['saa'] == '1') echo ' selected="selected"'; ?>>Pilvipouta</option>
+          <option value="2"<?php if (isset($kentat['saa']) && $kentat['saa'] == '2') echo ' selected="selected"'; ?>>Sadekuuroja</option>
+          <option value="3"<?php if (isset($kentat['saa']) && $kentat['saa'] == '3') echo ' selected="selected"'; ?>>Jatkuva sade</option>
+          </select><br />
+          <b>Lämpötila:</b> <input type="text" name="lampotila" <?php if (isset($kentat['lampotila'])) echo ' value="' . $kentat['lampotila'] . '" '; ?>/>&deg;C<br />
+          <b>Tuuli:</b> <input type="text" name="tuuli" <?php if (isset($kentat['tuuli'])) echo ' value="' . $kentat['tuuli'] . '" '; ?>/>m/s<br />
+        </td>
+        <td>
+          <b>Muuta:</b><br />
+          <textarea name="muuta" rows="5" cols="40"><?php if (isset($kentat['muuta'])) echo $kentat['muuta']; ?></textarea>
+        </td>
+      </tr>
+    </table><br /><br />
+    <select id="pelaajat">
+<?php 
+foreach ($pelaajat as $pelaaja) {
+  if (!isset($pelaajienTiedot[$pelaaja['id']])) echo '<option value="' . $pelaaja['id'] . '">' . $pelaaja['nimi'] . "</option>\r\n";
+}
+?>
+    </select>
+    <input type="button" value="Lisää pelaaja" onclick="lisaaPelaaja()" /><br /><br />
+    <div id="scorecardit">
+<?php 
+if (isset($pelaajienTiedot)) {
+  foreach ($pelaajienTiedot as $pelaajaId => $pelaaja) {
+    echo '<div id="pelaaja_' . $pelaajaId . '"><b>Pelaaja:</b> ' . $pelaajat[$pelaajaId]['nimi'] . '
+<div class="oikea"><a href="#" onclick="poistaPelaaja(' . $pelaajaId . ')">Poista pelaaja</a></div><br />
+<b>Tii:</b> <table class="tiivalinta"><tr>';
+    if ($pelaajat[$pelaajaId]['sukupuoli'] == "mies") {
+      echo '<td class="v"><input type="radio" name="pelaaja_' . $pelaajaId . '_tii" value="valkoinen" ' . (($kentat['pelaaja_' . $pelaajaId . '_tii'] == 'valkoinen')?'checked="checked" ':'') . '/></td>';
+    }
+    echo '<td class="k"><input type="radio" name="pelaaja_' . $pelaajaId . '_tii" value="keltainen" ' . (($kentat['pelaaja_' . $pelaajaId . '_tii'] == 'keltainen')?'checked="checked" ':'') . '/></td>
+<td class="s"><input type="radio" name="pelaaja_' . $pelaajaId . '_tii" value="sininen" ' . (($kentat['pelaaja_' . $pelaajaId . '_tii'] == 'sininen')?'checked="checked" ':'') . '/></td>
+<td class="p"><input type="radio" name="pelaaja_' . $pelaajaId . '_tii" value="punainen" ' . (($kentat['pelaaja_' . $pelaajaId . '_tii'] == 'punainen')?'checked="checked" ':'') . '/></td>
+</tr></table><br />
+<table class="table-simppeli">
+<tr>
+<td class="info">Väylä</td>
+<td class="info">Par</td>
+<td class="info">HCP</td>
+<td>Lyönnit</td>
+<td>Aloituslyönti</td>
+<td>Greeniosuma</td>
+<td>Putit</td>
+<td>Bunkkeri</td>
+<td>Rankkarit</td>
+</tr>';
+    foreach ($vaylaInfo as $vayla) {
+      echo '<tr>
+<td class="info">' . $vayla['numero'] . '</td>
+<td class="info">' . $vayla['par'] . '</td>
+<td class="info">' . $vayla['hcp'] . '</td>
+<td><input type="text" name="pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_lyonnit" size="2" value="' . $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_lyonnit'] . '" /></td>
+<td><input type="radio" name="pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_avaus" value="vasen" ' . (($kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_avaus'] == 'vasen')?'checked="checked" ':'') . '/>Vasen 
+<input type="radio" name="pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_avaus" value="vayla" ' . (($kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_avaus'] == 'vayla')?'checked="checked" ':'') . '/>Väylä 
+<input type="radio" name="pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_avaus" value="oikea" ' . (($kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_avaus'] == 'oikea')?'checked="checked" ':'') . '/>Oikea</td>
+<td><input type="checkbox" name="pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_greeniosuma" ' . ((isset($kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_greeniosuma']))?'checked="checked" ':'') . '/></td>
+<td><input type="text" name="pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_putit" size="2" value="' . $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_putit'] . '" /></td>
+<td><input type="checkbox" name="pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_bunkkerissa" ' . ((isset($kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_bunkkerissa']))?'checked="checked" ':'') . 'onclick="toggleBunkkeri(' . $pelaajaId . ', ' . $vayla['numero'] . ')" /><select name="pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_bunkkerista"' . ((isset($kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_bunkkerissa']))?'':' class="hidden"') . '>
+  <option value="2">Miten onnistui?</option>
+  <option value="1"' . (($kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_bunkkerista'] == '1')?' selected="selected"':'') . '>Hyvin</option>
+  <option value="2"' . (($kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_bunkkerista'] == '2')?' selected="selected"':'') . '>Kohtalaisesti</option>
+  <option value="3"' . (($kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_bunkkerista'] == '3')?' selected="selected"':'') . '>Huonosti</option>
+  </select></td>
+<td><input type="text" name="pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_rankkari" size="2" value="' . $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_rankkari'] . '" /></td>
+</tr>
+';
+    }
+    echo '</table><br /></div>';
+  }
+}
+?>
+    </div>
+    
+    <br /><input type="submit" value="Lähetä" />
+  </div>
+</form>

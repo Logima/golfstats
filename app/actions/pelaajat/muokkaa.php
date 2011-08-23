@@ -1,6 +1,6 @@
 <?php
 
-if (count($_POST) == 0) {
+if (empty($_POST)) {
   $kentat = Atomik_Db::find('pelaajat', array('id' => $_GET['pelaaja']));
   $tasoituksetQuery = Atomik_Db::findAll('tasoitukset', array('pelaaja' => $_GET['pelaaja']));
   $tasoitusMaara = 0;

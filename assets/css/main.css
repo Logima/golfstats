@@ -66,3 +66,50 @@ body {
     border: 1px solid;
     text-align: center;
   }
+  
+  .table-simppeli .info {
+    background: #d2d6c7;
+  }
+
+.kahtiajako {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+  .kahtiajako td {
+    vertical-align: top;
+    width: 50%;
+  }
+
+.hidden {
+  display: none;
+}
+
+.tiivalinta {
+  border-collapse: collapse;
+  display: inline;
+}
+
+  .tiivalinta td {
+    border: 1px solid;
+  }
+  
+  .tiivalinta .v {
+    background: #ffffff;
+  }
+  
+  .tiivalinta .k {
+    background: #ffe300;
+  }
+  
+  .tiivalinta .s {
+    background: #0074b3;
+  }
+  
+  .tiivalinta .p {
+    background: #ef3010;
+  }
+
+.oikea {
+  float: right;
+}

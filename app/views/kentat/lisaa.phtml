@@ -1,4 +1,4 @@
-<h3>Lisää kenttä</h3><br />
+<h3>Lisää kenttä</h3>
 <form action="" method="post">
   <div>
     <b>Nimi:</b> <input type="text" name="nimi" value="<?php echo $sanitoidutTiedot['nimi']; ?>" /><br /><br />
@@ -9,21 +9,21 @@
         <td>Miehet</td>
         <td>Naiset</td>
       </tr>
-     <tr>
-       <td style="background-color: white;"></td>
-       <td><input type="text" name="crslopemv" value="<?php echo $sanitoidutTiedot['crslopemv']; ?>" /></td>
-       <td></td>
-     </tr>
-     <tr>
-       <td style="background-color: yellow;"></td>
-       <td><input type="text" name="crslopemk" value="<?php echo $sanitoidutTiedot['crslopemk']; ?>" /></td>
-       <td><input type="text" name="crslopenk" value="<?php echo $sanitoidutTiedot['crslopenk']; ?>" /></td>
-     </tr>
+      <tr>
+        <td style="background-color: white;"></td>
+        <td><input type="text" name="crslopemv" value="<?php echo $sanitoidutTiedot['crslopemv']; ?>" /></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td style="background-color: yellow;"></td>
+        <td><input type="text" name="crslopemk" value="<?php echo $sanitoidutTiedot['crslopemk']; ?>" /></td>
+        <td><input type="text" name="crslopenk" value="<?php echo $sanitoidutTiedot['crslopenk']; ?>" /></td>
+      </tr>
       <tr>
         <td style="background-color: blue;"></td>
-       <td><input type="text" name="crslopems" value="<?php echo $sanitoidutTiedot['crslopems']; ?>" /></td>
-       <td><input type="text" name="crslopens" value="<?php echo $sanitoidutTiedot['crslopens']; ?>" /></td>
-     </tr>
+        <td><input type="text" name="crslopems" value="<?php echo $sanitoidutTiedot['crslopems']; ?>" /></td>
+        <td><input type="text" name="crslopens" value="<?php echo $sanitoidutTiedot['crslopens']; ?>" /></td>
+      </tr>
       <tr>
         <td style="background-color: red;"></td>
         <td><input type="text" name="crslopemp" value="<?php echo $sanitoidutTiedot['crslopemp']; ?>" /></td>
@@ -32,18 +32,18 @@
     </table><br />
     <b>Väylät</b>
     <table class="table-simppeli">
-	   <tr>
+	  <tr>
         <td>Numero</td>
         <td>Par</td>
         <td>HCP</td>
-     </tr>
+      </tr>
 <?php
 for($i=1;$i<19;$i++) {
   echo '
- 	   <tr>
+ 	  <tr>
         <td>' . $i . '</td>
-        <td><input type="text" name="vayla_' . $i . '_par" value="' . ((isset($sanitoidutVaylat["vayla_" . $i . "_par"])) ? $sanitoidutVaylat["vayla_" . $i . "_par"] : '') . '" /></td>
-        <td><input type="text" name="vayla_' . $i . '_hcp" value="' . ((isset($sanitoidutVaylat["vayla_" . $i . "_hcp"])) ? $sanitoidutVaylat["vayla_" . $i . "_hcp"] : '') . '" /></td>
+        <td><input type="text" name="vayla_' . $i . '_par" size="3" value="' . ((isset($sanitoidutVaylat["vayla_" . $i . "_par"])) ? $sanitoidutVaylat["vayla_" . $i . "_par"] : '') . '" /></td>
+        <td><input type="text" name="vayla_' . $i . '_hcp" size="3" value="' . ((isset($sanitoidutVaylat["vayla_" . $i . "_hcp"])) ? $sanitoidutVaylat["vayla_" . $i . "_hcp"] : '') . '" /></td>
       </tr>';
 }
 ?>

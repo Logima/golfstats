@@ -1,0 +1,8 @@
+<b>Järjestelmässä olevat kierrokset:</b><br />
+<?php
+if (count($kierrokset) > 0) {
+  foreach ($kierrokset as $kierros) {
+    echo '<a href="' . Atomik::url('kierrokset/katso', array('kierros' => $kierros['id'])) . '">' . $kierros['kentannimi'] . " " . date("j.n.Y", $kierros['lahtoaika']) . "</a><br />\r\n";
+  }
+} else echo "Ei kierroksia järjestelmässä<br />\r\n";
+echo '<br /><a href="' . Atomik::url("kierrokset/lisaa") . '">Lisää kierros</a>';

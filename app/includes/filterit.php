@@ -25,14 +25,14 @@ function tarkistaKenttaSyote($post) {
         return array(false, $sanitoidutTiedot, $sanitoidutVaylat);
       }
       $vaylienPar[$knimiOsat[1]] = $kentta;
-    } else if ($knimiOsat[2] == 'hcp') $vaylienHcp[$knimiOsat[1]] = $kentta;
+    } else if ($knimiOsat[2] == 'hcp') $vaylienHcp[$knimiOsat[1]] = (int)$kentta;
   }
   $vaylienHcpCopy = $vaylienHcp;
   sort($vaylienHcpCopy);
   if (count($vaylienHcpCopy) == 0) {
     Atomik::flash("Yhdenkään väylän tietoja ei annettu.", "error");
     return array(false, $sanitoidutTiedot, $sanitoidutVaylat);
-  } else if ($vaylienHcpCopy !== range(1,count($vaylienHcpCopy))) {
+  } else if ($vaylienHcpCopy !== range(1, count($vaylienHcpCopy))) {
     Atomik::flash("HCP:t eivät täsmää.", "error");
     return array(false, $sanitoidutTiedot, $sanitoidutVaylat);
   }
@@ -71,4 +71,36 @@ function tarkistaPelaajaSyote($post) {
   return array($post, $tasoitukset, $paivamaarat);
 }
 
+function tarkistaKierrosSyote($post) {
+  $post = filter_var_array($post, FILTER_SANITIZE_STRING);
+  $kierroksenTiedot = array();
+  $pelaajat = array();
+  foreach ($post as $knimi => $value) {
+    if ($knimi == 'lahtoaika') {
+      $pvm = strtotime($value);
+      if ($pvm === false) {
+        Atomik::flash("Annettu päivämäärä ei ole kelvollinen.", "error");
+        $virhe = true;
+      } else {
+        $kierroksenTiedot[$knimi] = $pvm;
+      }
+      continue;
+    }
+    $palat = explode('_', $knimi);
+    if ($palat[0] == $knimi) {
+      $kierroksenTiedot[$knimi] = $value;
+    } else {
+      $pelaajaId = $palat[1];
+      if (!isset($pelaajat[$pelaajaId])) $pelaajat[$pelaajaId] = array('vaylat' => array());
+      if ($palat[2] == 'vayla') {
+        if (!isset($pelaajat[$pelaajaId]['vaylat'][$palat[3]])) $pelaajat[$pelaajaId]['vaylat'][$palat[3]] = array();
+        $pelaajat[$pelaajaId]['vaylat'][$palat[3]][$palat[4]] = $value;
+      } else {
+        $pelaajat[$pelaajaId][$palat[2]] = $value;
+      }
+    }
+  }
+  if (isset($virhe)) return array(false, $post, $kierroksenTiedot, $pelaajat);
+  return array($post, $kierroksenTiedot, $pelaajat);
+}
 

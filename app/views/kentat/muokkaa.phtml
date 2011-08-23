@@ -1,7 +1,7 @@
-<h3>Muokkaa kenttää <?php echo $tiedot['nimi']; ?></h3><br />
+<h3>Muokkaa kenttää <?php echo $tiedot['nimi']; ?></h3>
 <form action="" method="post">
   <div>
-    <b>Nimi:</b> <input type="text" name="nimi" value="<?php echo $tiedot['nimi']; ?>" /><br /> <br />
+    <b>Nimi:</b> <input type="text" name="nimi" value="<?php echo $tiedot['nimi']; ?>" /><br /><br />
     <b>CR ja Slope (muodossa CR/Slope):</b><br />
     <table class="crslope">
       <tr>
@@ -29,9 +29,9 @@
         <td><input type="text" name="crslopemp" value="<?php echo $tiedot['crslopemp']; ?>" /></td>
         <td><input type="text" name="crslopenp" value="<?php echo $tiedot['crslopenp']; ?>" /></td>
       </tr>
-    </table>
-    <br /> <b>Väylät</b>
-    <table class="vaylalista">
+    </table><br />
+    <b>Väylät</b>
+    <table class="table-simppeli">
       <tr>
         <td>Numero</td>
         <td>Par</td>
@@ -42,8 +42,8 @@ for($i=1;$i<19;$i++) {
   echo '
       <tr>
         <td>' . $i . '</td>
-        <td><input type="text" name="vayla_' . $i . '_par" value="' . ((isset($vaylienTiedot["vayla_" . $i . "_par"])) ? $vaylienTiedot["vayla_" . $i . "_par"] : '') . '" /></td>
-        <td><input type="text" name="vayla_' . $i . '_hcp" value="' . ((isset($vaylienTiedot["vayla_" . $i . "_hcp"])) ? $vaylienTiedot["vayla_" . $i . "_hcp"] : '') . '" /></td>
+        <td><input type="text" name="vayla_' . $i . '_par" size="3" value="' . ((isset($vaylienTiedot["vayla_" . $i . "_par"])) ? $vaylienTiedot["vayla_" . $i . "_par"] : '') . '" /></td>
+        <td><input type="text" name="vayla_' . $i . '_hcp" size="3" value="' . ((isset($vaylienTiedot["vayla_" . $i . "_hcp"])) ? $vaylienTiedot["vayla_" . $i . "_hcp"] : '') . '" /></td>
       </tr>';
 }
 ?>
