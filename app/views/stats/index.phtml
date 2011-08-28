@@ -1,0 +1,14 @@
+<h3>Katso statistiikkoja</h3>
+
+<form action="<?php echo Atomik::url('/stats/nayta'); ?>" method="get">
+  <div>
+    <b>Pelaaja:</b> <select name="pelaaja">
+<?php 
+foreach ($pelaajat as $pelaaja) {
+  if (!isset($pelaajienTiedot[$pelaaja['id']])) echo '<option value="' . $pelaaja['id'] . '">' . $pelaaja['nimi'] . "</option>\r\n";
+}
+?>
+    </select><br /><br />
+    <input type="submit" value="Katso" />
+  </div>
+</form>

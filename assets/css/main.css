@@ -113,3 +113,7 @@ body {
 .oikea {
   float: right;
 }
+
+.center {
+  text-align: center;
+}
