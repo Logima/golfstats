@@ -65,7 +65,7 @@ switch ($_GET['graafi']) {
       	and kierrokset.id=?
       	and pelatut_vaylat.pelaaja=?', array($kierros['id'], $pelaaja['id']));
       foreach ($q2 as $pelattuVayla) {
-        $pisteet += bogeyPisteet($pelaajanSlope, $pelattuVayla['hcp'], $pelattuVayla['par'], $pelattuVayla['tulos']);
+        $pisteet += bogeyPisteet($pelaajanSlope, $pelattuVayla['hcp'], $pelattuVayla['par'], $pelattuVayla['lyonnit']);
       }
       $pisteetVaylittain[] = $pisteet;
       $ajankohdat[] = date("j.n.Y", $kierros['lahtoaika']);

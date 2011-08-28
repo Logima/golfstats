@@ -47,9 +47,9 @@ foreach (Atomik_Db::findAll('kierroksen_pelaajat', array('kierros' => $kierros['
   $kentat['pelaaja_' . $pelaajaId . '_tii'] = $pelaaja['tii'];
   foreach (Atomik_Db::findAll('pelatut_vaylat', array('kierros' => $kierros['id'], 'pelaaja' => $pelaajaId)) as $pelattuVayla) {
     $liite = ($pelattuVayla['vayla'] > 9)?'in_':'out_';
-    $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_lyonnit'] = $pelattuVayla['tulos'];
-    $pelaajienTiedot[$pelaajaId][$liite . 'lyonnit'] += $pelattuVayla['tulos'];
-    $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_avaus'] = $pelattuVayla['aloituslyonti'];
+    $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_lyonnit'] = $pelattuVayla['lyonnit'];
+    $pelaajienTiedot[$pelaajaId][$liite . 'lyonnit'] += $pelattuVayla['lyonnit'];
+    $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_avaus'] = $pelattuVayla['avaus'];
     if ($pelattuVayla['greeniosuma'] == 1) {
       $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_greeniosuma'] = 'on';
       $pelaajienTiedot[$pelaajaId][$liite . 'greeniosumat']++;
@@ -63,7 +63,7 @@ foreach (Atomik_Db::findAll('kierroksen_pelaajat', array('kierros' => $kierros['
     $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_bunkkerista'] = $pelattuVayla['bunkkeri'];
     $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_rankkari'] = $pelattuVayla['rankkari'];
     $pelaajienTiedot[$pelaajaId][$liite . 'rankkarit'] += $pelattuVayla['rankkari'];
-    $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_pisteet'] = bogeyPisteet($pelaajienTiedot[$pelaajaId]['slope'], $vaylaInfo[$pelattuVayla['vayla']]['hcp'], $vaylaInfo[$pelattuVayla['vayla']]['par'], $pelattuVayla['tulos']);
+    $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_pisteet'] = bogeyPisteet($pelaajienTiedot[$pelaajaId]['slope'], $vaylaInfo[$pelattuVayla['vayla']]['hcp'], $vaylaInfo[$pelattuVayla['vayla']]['par'], $pelattuVayla['lyonnit']);
     $pelaajienTiedot[$pelaajaId][$liite . 'pisteet'] += $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_pisteet'];
     
   }

@@ -74,7 +74,7 @@ function tarkistaPelaajaSyote($post) {
 function tarkistaKierrosSyote($post) {
   $post = filter_var_array($post, FILTER_SANITIZE_STRING);
   $kierroksenTiedot = array();
-  $pelaajat = array();
+  $pelaajienTiedot = array();
   foreach ($post as $knimi => $value) {
     if ($knimi == 'lahtoaika') {
       $pvm = strtotime($value);
@@ -91,16 +91,15 @@ function tarkistaKierrosSyote($post) {
       $kierroksenTiedot[$knimi] = $value;
     } else {
       $pelaajaId = $palat[1];
-      if (!isset($pelaajat[$pelaajaId])) $pelaajat[$pelaajaId] = array('vaylat' => array());
+      if (!isset($pelaajienTiedot[$pelaajaId])) $pelaajienTiedot[$pelaajaId] = array('vaylat' => array());
       if ($palat[2] == 'vayla') {
-        if (!isset($pelaajat[$pelaajaId]['vaylat'][$palat[3]])) $pelaajat[$pelaajaId]['vaylat'][$palat[3]] = array();
-        $pelaajat[$pelaajaId]['vaylat'][$palat[3]][$palat[4]] = $value;
+        if (!isset($pelaajienTiedot[$pelaajaId]['vaylat'][$palat[3]])) $pelaajienTiedot[$pelaajaId]['vaylat'][$palat[3]] = array();
+        $pelaajienTiedot[$pelaajaId]['vaylat'][$palat[3]][$palat[4]] = $value;
       } else {
-        $pelaajat[$pelaajaId][$palat[2]] = $value;
+        $pelaajienTiedot[$pelaajaId][$palat[2]] = $value;
       }
     }
   }
-  if (isset($virhe)) return array(false, $post, $kierroksenTiedot, $pelaajat);
-  return array($post, $kierroksenTiedot, $pelaajat);
+  if (isset($virhe)) return array(false, $kierroksenTiedot, $pelaajienTiedot);
+  return array($kierroksenTiedot, $pelaajienTiedot);
 }
-
