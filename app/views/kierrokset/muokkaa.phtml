@@ -3,7 +3,6 @@
 function toggleBunkkeri(pelaajaId, vayla) {
   $('select[name=pelaaja_' + pelaajaId + '_vayla_' + vayla + '_bunkkerista]').toggle();
 }
-<?php if(isset($kentta)): ?>
 
 pelaajienNimet = new Array();
 pelaajienSukupuolet = new Array();
@@ -85,7 +84,6 @@ function poistaPelaaja(pelaajaId) {
 $(document).ready(function() {
   bindKeyup();
 });
-<?php endif; ?>
 //-->
 </script>
 
