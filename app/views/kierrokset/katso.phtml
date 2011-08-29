@@ -3,24 +3,23 @@
   <tr>
     <td>
       <b>Kenttä:</b> <?php echo $kentta['nimi']; ?><br />
-      <b>Lähtöaika:</b> <?php echo $kentat['lahtoaika']; ?><br />
-      <b>Tarkoitus:</b> <?php echo $kentat['tarkoitus']; ?><br />
-      <b>Sää:</b> <?php echo $saat[$kentat['saa']]; ?><br />
-      <b>Lämpötila:</b> <?php echo $kentat['lampotila']; ?>&deg;C<br />
-      <b>Tuuli:</b> <?php echo $kentat['tuuli']; ?>m/s<br />
+      <b>Lähtöaika:</b> <?php echo date("j.n.Y G:i", $kierroksenTiedot['lahtoaika']); ?><br />
+      <b>Tarkoitus:</b> <?php echo $kierroksenTiedot['tarkoitus']; ?><br />
+      <b>Sää:</b> <?php echo $saat[$kierroksenTiedot['saa']]; ?><br />
+      <b>Lämpötila:</b> <?php echo $kierroksenTiedot['lampotila']; ?>&deg;C<br />
+      <b>Tuuli:</b> <?php echo $kierroksenTiedot['tuuli']; ?>m/s<br />
     </td>
     <td>
       <b>Muuta:</b><br />
-      <?php echo $kentat['muuta']; ?>
+      <?php echo $kierroksenTiedot['muuta']; ?>
     </td>
   </tr>
 </table><br /><br />
 <div id="scorecardit">
 <?php 
-if (isset($pelaajienTiedot)) {
-  foreach ($pelaajienTiedot as $pelaajaId => $pelaaja) {
-    echo '<div id="pelaaja_' . $pelaajaId . '"><b>Pelaaja:</b> ' . $pelaajat[$pelaajaId]['nimi'] . '<br />
-<b>Tii:</b> ' . $kentat['pelaaja_' . $pelaajaId . '_tii'] . '<br />
+foreach ($pelaajienTiedot as $pelaajaId => $pelaaja) {
+  echo '<div id="pelaaja_' . $pelaajaId . '"><b>Pelaaja:</b> ' . $pelaaja['nimi'] . '<br />
+<b>Tii:</b> ' . $pelaaja['tii'] . '<br />
 <b>Tasoitus pelattaessa:</b> ' . $pelaaja['tasoitus'] . '<br />
 <b>Slope pelattaessa:</b> ' . $pelaaja['slope'] . '<br />
 <table class="table-simppeli">
@@ -36,54 +35,51 @@ if (isset($pelaajienTiedot)) {
     <td>Bunkkeri</td>
     <td>Rankkarit</td>
   </tr>';
-    $vaylaCount = 1;
-    foreach ($vaylaInfo as $vayla) {
-      echo '  <tr>
-    <td class="info">' . $vayla['numero'] . '</td>
+  foreach ($pelaaja['vaylat'] as $vaylanNumero => $vayla) {
+    echo '  <tr>
+    <td class="info">' . $vaylanNumero . '</td>
     <td class="info">' . $vayla['par'] . '</td>
     <td class="info">' . $vayla['hcp'] . '</td>
-    <td>' . $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_lyonnit'] . '</td>
-    <td>' . $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_pisteet'] . '</td>
-    <td>' . $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_avaus'] . '</td>
-    <td>' . ((isset($kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_greeniosuma']))?'Kyllä':'Ei') . '</td>
-    <td>' . $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_putit'] . '</td>
-    <td>' . $bunkkerit[$kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_bunkkerista']] . '</td>
-    <td>' . $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $vayla['numero'] . '_rankkari'] . '</td>
+    <td>' . $vayla['lyonnit'] . '</td>
+    <td>' . $vayla['pisteet'] . '</td>
+    <td>' . $vayla['avaus'] . '</td>
+    <td>' . (($vayla['greeniosuma'] == 'on')?'Kyllä':'Ei') . '</td>
+    <td>' . $vayla['putit'] . '</td>
+    <td>' . $bunkkerit[$vayla['bunkkerista']] . '</td>
+    <td>' . $vayla['rankkari'] . '</td>
   </tr>
 ';
-      if (($vaylaCount == 9 || $vaylaCount == 18) && count($vaylaInfo) == 18) {
-        $liite = ($vaylaCount == 9)?'out_':'in_';
-        echo '  <tr>
-    <td class="info">' . (($vaylaCount == 9)?'Out':'In') . '</td>
-    <td class="info">' . $kentta[$liite . 'par'] . '</td>
+    if (($vaylanNumero == 9 || $vaylanNumero == 18) && $kentta['vaylia'] == 18) {
+      $puolisko = ($vaylanNumero == 9)?'total_out':'total_in';
+      echo '  <tr>
+    <td class="info">' . (($vaylanNumero == 9)?'Out':'In') . '</td>
+    <td class="info">' . $pelaaja[$puolisko]['par'] . '</td>
     <td class="info"></td>
-    <td class="info">' . $pelaaja[$liite . 'lyonnit'] . '</td>
-    <td class="info">' . $pelaaja[$liite . 'pisteet'] . '</td>
+    <td class="info">' . $pelaaja[$puolisko]['lyonnit'] . '</td>
+    <td class="info">' . $pelaaja[$puolisko]['pisteet'] . '</td>
     <td class="info"></td>
-    <td class="info">' . $pelaaja[$liite . 'greeniosumat'] . '</td>
-    <td class="info">' . $pelaaja[$liite . 'putit'] . '</td>
-    <td class="info">' . $pelaaja[$liite . 'bunkkerit'] . '</td>
-    <td class="info">' . $pelaaja[$liite . 'rankkarit'] . '</td>
+    <td class="info">' . $pelaaja[$puolisko]['greeniosuma'] . '</td>
+    <td class="info">' . $pelaaja[$puolisko]['putit'] . '</td>
+    <td class="info">' . $pelaaja[$puolisko]['bunkkeri'] . '</td>
+    <td class="info">' . $pelaaja[$puolisko]['rankkari'] . '</td>
   </tr>
         ';
-      }
-      $vaylaCount++;
     }
-    echo '  <tr>
+  }
+  echo '  <tr>
     <td class="info">Total</td>
     <td class="info">' . $kentta['par'] . '</td>
     <td class="info"></td>
-    <td class="info">' . $pelaaja['lyonnit'] . '</td>
-    <td class="info">' . $pelaaja['pisteet'] . '</td>
+    <td class="info">' . $pelaaja['total']['lyonnit'] . '</td>
+    <td class="info">' . $pelaaja['total']['pisteet'] . '</td>
     <td class="info"></td>
-    <td class="info">' . $pelaaja['greeniosumat'] . '</td>
-    <td class="info">' . $pelaaja['putit'] . '</td>
-    <td class="info">' . $pelaaja['bunkkerit'] . '</td>
-    <td class="info">' . $pelaaja['rankkarit'] . '</td>
+    <td class="info">' . $pelaaja['total']['greeniosuma'] . '</td>
+    <td class="info">' . $pelaaja['total']['putit'] . '</td>
+    <td class="info">' . $pelaaja['total']['bunkkeri'] . '</td>
+    <td class="info">' . $pelaaja['total']['rankkari'] . '</td>
   </tr>
 </table></div>';
-  }
 }
 ?>
 </div><br />
-<a href="<?php echo Atomik::url('kierrokset/muokkaa', array('kierros' => $kierros['id'])); ?>">[Muokkaa]</a>
+<a href="<?php echo Atomik::url('kierrokset/muokkaa', array('kierros' => $kierroksenTiedot['id'])); ?>">[Muokkaa]</a>

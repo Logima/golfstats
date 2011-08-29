@@ -6,74 +6,34 @@ if (!isset($_GET['kierros']) || Atomik_Db::count('kierrokset', array('id' => $_G
   Atomik::flash("Kierrosta ei löydy.", "error");
   Atomik::redirect('/kierrokset');
 }
-$kierros = Atomik_Db::find('kierrokset', array('id' => $_GET['kierros']));
+$kierroksenTiedot = Atomik_Db::find('kierrokset', array('id' => $_GET['kierros']));
 
-$kentta = Atomik_Db::find('kentat', array('id' => $kierros['kentta']));
-$q = Atomik_Db::query('select sum(par) as in_par from kentan_vaylat where numero > 9 and kentta = ?', array($kentta['id']))->fetch();
-$kentta['in_par'] = $q['in_par'];
-$q = Atomik_Db::query('select sum(par) as out_par from kentan_vaylat where numero < 10 and kentta = ?', array($kentta['id']))->fetch();
-$kentta['out_par'] = $q['out_par'];
-$kentta['par'] = $kentta['out_par'] + $kentta['in_par']; 
-$vaylaInfo = array();
-foreach (Atomik_Db::findAll('kentan_vaylat', array('kentta' => $kierros['kentta'])) as $vayla) {
-  $vaylaInfo[$vayla['numero']] = $vayla;
-}
-$pelaajat = array();
-foreach (Atomik_Db::findAll('pelaajat') as $pelaaja) {
-  $pelaajat[$pelaaja['id']] = $pelaaja;
-}
+$kentta = Atomik_Db::query('select kentat.*, sum(kentan_vaylat.par) as par, count(kentan_vaylat.par) as vaylia from kentat, kentan_vaylat where kentat.id=kentan_vaylat.kentta and id=?', array($kierroksenTiedot['kentta']))->fetch();
 
-$kentat = $kierros;
-$kentat['lahtoaika'] = date("j.n.Y G:i", $kierros['lahtoaika']);
 $pelaajienTiedot = array();
-foreach (Atomik_Db::findAll('kierroksen_pelaajat', array('kierros' => $kierros['id'])) as $pelaaja) {
+foreach (Atomik_Db::query('select * from pelaajat, kierroksen_pelaajat where pelaajat.id=kierroksen_pelaajat.pelaaja and kierroksen_pelaajat.kierros=?', array($kierroksenTiedot['id'])) as $pelaaja) {
   $pelaajaId = $pelaaja['pelaaja'];
-  $pelaajienTiedot[$pelaajaId] = array();
-  $pelaajienTiedot[$pelaajaId]['tasoitus'] = haeTasoitus($pelaajaId, $kierros['lahtoaika']);
-  $pelaajienTiedot[$pelaajaId]['slope'] = slope($pelaajienTiedot[$pelaajaId]['tasoitus'], $kentta['crslope' . substr($pelaajat[$pelaajaId]['sukupuoli'], 0, 1) . substr($pelaaja['tii'], 0, 1)], $kentta['par']);
-  
-  $pelaajienTiedot[$pelaajaId]['out_lyonnit'] = 0;
-  $pelaajienTiedot[$pelaajaId]['out_pisteet'] = 0;
-  $pelaajienTiedot[$pelaajaId]['out_greeniosumat'] = 0;
-  $pelaajienTiedot[$pelaajaId]['out_putit'] = 0;
-  $pelaajienTiedot[$pelaajaId]['out_bunkkerit'] = 0;
-  $pelaajienTiedot[$pelaajaId]['out_rankkarit'] = 0;
-  $pelaajienTiedot[$pelaajaId]['in_lyonnit'] = 0;
-  $pelaajienTiedot[$pelaajaId]['in_pisteet'] = 0;
-  $pelaajienTiedot[$pelaajaId]['in_greeniosumat'] = 0;
-  $pelaajienTiedot[$pelaajaId]['in_putit'] = 0;
-  $pelaajienTiedot[$pelaajaId]['in_bunkkerit'] = 0;
-  $pelaajienTiedot[$pelaajaId]['in_rankkarit'] = 0;
-  $kentat['pelaaja_' . $pelaajaId . '_tii'] = $pelaaja['tii'];
-  foreach (Atomik_Db::findAll('pelatut_vaylat', array('kierros' => $kierros['id'], 'pelaaja' => $pelaajaId)) as $pelattuVayla) {
-    $liite = ($pelattuVayla['vayla'] > 9)?'in_':'out_';
-    $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_lyonnit'] = $pelattuVayla['lyonnit'];
-    $pelaajienTiedot[$pelaajaId][$liite . 'lyonnit'] += $pelattuVayla['lyonnit'];
-    $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_avaus'] = $pelattuVayla['avaus'];
-    if ($pelattuVayla['greeniosuma'] == 1) {
-      $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_greeniosuma'] = 'on';
-      $pelaajienTiedot[$pelaajaId][$liite . 'greeniosumat']++;
-    }
-    $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_putit'] = $pelattuVayla['putit'];
-    $pelaajienTiedot[$pelaajaId][$liite . 'putit'] += $pelattuVayla['putit'];
-    if ($pelattuVayla['bunkkeri'] > 0) {
-      $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_bunkkerissa'] = 'on';
-      $pelaajienTiedot[$pelaajaId][$liite . 'bunkkerit']++;
-    }
-    $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_bunkkerista'] = $pelattuVayla['bunkkeri'];
-    $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_rankkari'] = $pelattuVayla['rankkari'];
-    $pelaajienTiedot[$pelaajaId][$liite . 'rankkarit'] += $pelattuVayla['rankkari'];
-    $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_pisteet'] = bogeyPisteet($pelaajienTiedot[$pelaajaId]['slope'], $vaylaInfo[$pelattuVayla['vayla']]['hcp'], $vaylaInfo[$pelattuVayla['vayla']]['par'], $pelattuVayla['lyonnit']);
-    $pelaajienTiedot[$pelaajaId][$liite . 'pisteet'] += $kentat['pelaaja_' . $pelaajaId . '_vayla_' . $pelattuVayla['vayla'] . '_pisteet'];
-    
+  $pelaaja['tasoitus'] = haeTasoitus($pelaajaId, $kierroksenTiedot['lahtoaika']);
+  $pelaaja['slope'] = slope($pelaaja['tasoitus'], $kentta['crslope' . substr($pelaaja['sukupuoli'], 0, 1) . substr($pelaaja['tii'], 0, 1)], $kentta['par']);
+  $q = Atomik_Db::query('select * from pelatut_vaylat, kentan_vaylat, kierrokset
+          where pelatut_vaylat.vayla=kentan_vaylat.numero
+          and pelatut_vaylat.kierros=kierrokset.id
+          and kierrokset.kentta=kentan_vaylat.kentta
+          and kierrokset.id=?
+          and pelatut_vaylat.pelaaja=?', array($kierroksenTiedot['id'], $pelaajaId));
+  $pelaaja['vaylat'] = arvoIndeksiksi($q, 'vayla', true);
+  foreach ($pelaaja['vaylat'] as $vaylanNumero => $vayla) {
+    $pelaaja['vaylat'][$vaylanNumero]['pisteet'] = bogeyPisteet($pelaaja['slope'], $vayla['hcp'], $vayla['par'], $vayla['lyonnit']);
   }
-  $pelaajienTiedot[$pelaajaId]['lyonnit'] = $pelaajienTiedot[$pelaajaId]['out_lyonnit'] + $pelaajienTiedot[$pelaajaId]['in_lyonnit'];
-  $pelaajienTiedot[$pelaajaId]['pisteet'] = $pelaajienTiedot[$pelaajaId]['out_pisteet'] + $pelaajienTiedot[$pelaajaId]['in_pisteet'];
-  $pelaajienTiedot[$pelaajaId]['greeniosumat'] = $pelaajienTiedot[$pelaajaId]['out_greeniosumat'] + $pelaajienTiedot[$pelaajaId]['in_greeniosumat'];
-  $pelaajienTiedot[$pelaajaId]['putit'] = $pelaajienTiedot[$pelaajaId]['out_putit'] + $pelaajienTiedot[$pelaajaId]['in_putit'];
-  $pelaajienTiedot[$pelaajaId]['bunkkerit'] = $pelaajienTiedot[$pelaajaId]['out_bunkkerit'] + $pelaajienTiedot[$pelaajaId]['in_bunkkerit'];
-  $pelaajienTiedot[$pelaajaId]['rankkarit'] = $pelaajienTiedot[$pelaajaId]['out_rankkarit'] + $pelaajienTiedot[$pelaajaId]['in_rankkarit'];
+  if ($kentta['vaylia'] == 18) {
+    $pelaaja['total_out'] = yhteensaValilta(1, 9, $pelaaja['vaylat']);
+    $pelaaja['total_in'] = yhteensaValilta(10, 18, $pelaaja['vaylat']);
+  }
+  $pelaaja['total'] = yhteensaValilta(1, $kentta['vaylia'], $pelaaja['vaylat']);
+  $pelaajienTiedot[$pelaajaId] = $pelaaja;
 }
+$pelaajienTiedot = kierrosPelaajatKannasta($pelaajienTiedot);
+
 
 $saat = array('Aurinkoinen', 'Pilvipouta', 'Sadekuuroja', 'Jatkuva sade');
 $bunkkerit = array('', 'Hyvin', 'Kohtalaisesti', 'Huonosti');

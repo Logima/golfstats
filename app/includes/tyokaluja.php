@@ -64,3 +64,15 @@ function arvoIndeksiksi($array, $arvo, $poistaPienet = false) {
   }
   return $out;
 }
+
+function yhteensaValilta($ensimmianen, $viimeinen, $array) {
+  $out = array();
+  for ($i = $ensimmianen; $i <= $viimeinen; $i++) {
+    foreach ($array[$i] as $kentanNimi => $kentta) {
+      if (!isset($out[$kentanNimi])) $out[$kentanNimi] = 0;
+      if ($kentanNimi == 'bunkkeri' && $kentta > 0) $out[$kentanNimi]++; 
+      else $out[$kentanNimi] += $kentta;
+    }
+  }
+  return $out;
+}
