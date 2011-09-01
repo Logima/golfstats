@@ -1,7 +1,10 @@
-<h3>Muokkaa kenttää <?php echo $tiedot['nimi']; ?></h3>
+<?php
+if ($lisaa) echo '<h3>Lisää kenttä</h3>';
+else echo '<h3>Muokkaa kenttää ' . $kentanTiedot['nimi'] . '</h3>';
+?>
 <form action="" method="post">
   <div>
-    <b>Nimi:</b> <input type="text" name="nimi" value="<?php echo $tiedot['nimi']; ?>" /><br /><br />
+    <b>Nimi:</b> <input type="text" name="nimi" value="<?php echo (isset($kentanTiedot))?$kentanTiedot['nimi']:''; ?>" /><br /><br />
     <b>CR ja Slope (muodossa CR/Slope):</b><br />
     <table class="crslope">
       <tr>
@@ -11,23 +14,23 @@
       </tr>
       <tr>
         <td style="background-color: white;"></td>
-        <td><input type="text" name="crslopemv" value="<?php echo $tiedot['crslopemv']; ?>" /></td>
+        <td><input type="text" name="crslopemv" value="<?php echo (isset($kentanTiedot))?$kentanTiedot['crslopemv']:''; ?>" /></td>
         <td></td>
       </tr>
       <tr>
         <td style="background-color: yellow;"></td>
-        <td><input type="text" name="crslopemk" value="<?php echo $tiedot['crslopemk']; ?>" /></td>
-        <td><input type="text" name="crslopenk" value="<?php echo $tiedot['crslopenk']; ?>" /></td>
+        <td><input type="text" name="crslopemk" value="<?php echo (isset($kentanTiedot))?$kentanTiedot['crslopemk']:''; ?>" /></td>
+        <td><input type="text" name="crslopenk" value="<?php echo (isset($kentanTiedot))?$kentanTiedot['crslopenk']:''; ?>" /></td>
       </tr>
       <tr>
         <td style="background-color: blue;"></td>
-        <td><input type="text" name="crslopems" value="<?php echo $tiedot['crslopems']; ?>" /></td>
-        <td><input type="text" name="crslopens" value="<?php echo $tiedot['crslopens']; ?>" /></td>
+        <td><input type="text" name="crslopems" value="<?php echo (isset($kentanTiedot))?$kentanTiedot['crslopems']:''; ?>" /></td>
+        <td><input type="text" name="crslopens" value="<?php echo (isset($kentanTiedot))?$kentanTiedot['crslopens']:''; ?>" /></td>
       </tr>
       <tr>
         <td style="background-color: red;"></td>
-        <td><input type="text" name="crslopemp" value="<?php echo $tiedot['crslopemp']; ?>" /></td>
-        <td><input type="text" name="crslopenp" value="<?php echo $tiedot['crslopenp']; ?>" /></td>
+        <td><input type="text" name="crslopemp" value="<?php echo (isset($kentanTiedot))?$kentanTiedot['crslopemp']:''; ?>" /></td>
+        <td><input type="text" name="crslopenp" value="<?php echo (isset($kentanTiedot))?$kentanTiedot['crslopenp']:''; ?>" /></td>
       </tr>
     </table><br />
     <b>Väylät</b>
@@ -36,18 +39,17 @@
         <td>Numero</td>
         <td>Par</td>
         <td>HCP</td>
-      </tr>
-<?php
+      </tr><?php
 for($i=1;$i<19;$i++) {
   echo '
       <tr>
         <td>' . $i . '</td>
-        <td><input type="text" name="vayla_' . $i . '_par" size="3" value="' . ((isset($vaylienTiedot["vayla_" . $i . "_par"])) ? $vaylienTiedot["vayla_" . $i . "_par"] : '') . '" /></td>
-        <td><input type="text" name="vayla_' . $i . '_hcp" size="3" value="' . ((isset($vaylienTiedot["vayla_" . $i . "_hcp"])) ? $vaylienTiedot["vayla_" . $i . "_hcp"] : '') . '" /></td>
+        <td><input type="text" name="vayla_' . $i . '_par" size="3" value="' . ((isset($vaylienTiedot[$i])) ? $vaylienTiedot[$i]['par'] : '') . '" /></td>
+        <td><input type="text" name="vayla_' . $i . '_hcp" size="3" value="' . ((isset($vaylienTiedot[$i])) ? $vaylienTiedot[$i]['hcp'] : '') . '" /></td>
       </tr>';
 }
 ?>
     </table><br />
-    <input type="submit" value="Lähetä" />
+    <input type="submit" value="Tallenna" />
   </div>
 </form>

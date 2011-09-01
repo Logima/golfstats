@@ -5,4 +5,4 @@ if (count($kentat) > 0) {
     echo '<a href="' . Atomik::url('kentat/muokkaa', array('kentta' => $kentta['id'])) . '">' . $kentta['nimi'] . "</a><br />\r\n";
   }
 } else echo "Ei kenttiä järjestelmässä<br />\r\n";
-echo '<br /><a href="' . Atomik::url("kentat/lisaa") . '">Lisää kenttä</a>';
+echo '<br /><a href="' . Atomik::url("kentat/muokkaa") . '">Lisää kenttä</a>';

@@ -1,39 +1,49 @@
 <?php
+$lisaa = false;
+if (!isset($_GET['kentta']) || Atomik_Db::count('kentat', array('id' => $_GET['kentta'])) != 1) {
+  $lisaa = true;
+}
 
+Atomik::needed('tyokaluja');
 
-if (count($_POST) == 0) {
-  $tiedot = Atomik_Db::find('kentat', array('id' => $_GET['kentta']));
-  $vaylienTiedotQuery = Atomik_Db::findAll('kentan_vaylat', array('kentta' => $_GET['kentta']));
-  $vaylienTiedot = array();
-  foreach ($vaylienTiedotQuery->toArray() as $value) {
-    $vaylienTiedot["vayla_" . $value['numero'] . "_par"] = $value['par'];
-    $vaylienTiedot["vayla_" . $value['numero'] . "_hcp"] = $value['hcp'];
-  }
-} else {
+if (empty($_POST) && !$lisaa) {
+  $kentanTiedot = Atomik_Db::find('kentat', array('id' => $_GET['kentta']));
+  $vaylienTiedot = arvoIndeksiksi(Atomik_Db::findAll('kentan_vaylat', array('kentta' => $_GET['kentta'])), 'numero');
+} elseif (!empty($_POST)) {
   Atomik::needed('filterit');
   $kentat = tarkistaKenttaSyote($_POST);
   if ($kentat[0] !== false) {
-    if (Atomik_Db::update('kentat', $kentat[0], array('id' => $_GET['kentta']))) {
+    list($kentanTiedot, $vaylienTiedot) = $kentat;
+    if ($lisaa) {
+      $kentanId = Atomik_Db::insert('kentat', $kentanTiedot);
+      if (!$kentanId) {
+        Atomik::flash("Virhe lisättäessä kenttää " . $kentanTiedot['nimi'] . ".", "error");
+        $virhe = true;
+      }
+    } else {
+      $kentanId = $_GET['kentta'];
+      if (!Atomik_Db::update('kentat', $kentanTiedot, array('id' => $kentanId))) {
+        Atomik::flash("Virhe muokattaessa kenttää " . $kentanTiedot['nimi'] . ".", "error");
+        $virhe = true;
+      }
+    }
+    
+    if (!isset($virhe)) {
       $viimeinenVayla = 0;
-      foreach ($kentat[2] as $vaylanNumero => $par) {
-        if (Atomik_Db::count('kentan_vaylat', array('kentta' => $_GET['kentta'], 'numero' => $vaylanNumero)) == 1) {
-          Atomik_Db::update('kentan_vaylat', array('hcp' => $kentat[3][$vaylanNumero], 'par' => $par),  array('kentta' => $_GET['kentta'], 'numero' => $vaylanNumero));
+      foreach ($vaylienTiedot as $vaylanNumero => $vayla) {
+        if (Atomik_Db::count('kentan_vaylat', array('kentta' => $kentanId, 'numero' => $vaylanNumero)) == 1) {
+          Atomik_Db::update('kentan_vaylat', array('hcp' => $vayla['hcp'], 'par' => $vayla['par']),  array('kentta' => $kentanId, 'numero' => $vaylanNumero));
         } else {
-          A('db:insert into kentan_vaylat values (?, ?, ?, ?)', array($_GET['kentta'], $vaylanNumero, $kentat[3][$vaylanNumero], $par));
+          A('db:insert into kentan_vaylat values (?, ?, ?, ?)', array($kentanId, $vaylanNumero, $vayla['hcp'], $vayla['par']));
         }
         $viimeinenVayla = $vaylanNumero;
       }
-      A('db:delete from kentan_vaylat where kentta = ? and numero > ?', array($_GET['kentta'], $viimeinenVayla));
-      Atomik::flash("Kentän " . $kentat[0]['nimi'] . " muokkaus onnistui.");
+      A('db:delete from kentan_vaylat where kentta = ? and numero > ?', array($kentanId, $viimeinenVayla));
+      Atomik::flash("Kentän " . $kentanTiedot['nimi'] . " muokkaus onnistui.");
       Atomik::redirect('/kentat');
-    } else {
-      Atomik::flash("Virhe muokattaessa kenttää " . $kentat[0]['nimi'] . ".", "error");
-      $tiedot = $kentat[0];
-      $vaylienTiedot = $kentat[1];
     }
   } else {
-    $tiedot = $kentat[1];
-    $vaylienTiedot = $kentat[2];
+    list(, $kentanTiedot, $vaylienTiedot) = $kentat;
   }
 }
 

@@ -8,35 +8,35 @@ function tarkistaKenttaSyote($post) {
   }
   $sanitoidutTiedot = filter_var_array($kentanTiedot, FILTER_SANITIZE_STRING);
   $sanitoidutVaylat = filter_var_array(array_slice($post, 8), FILTER_SANITIZE_NUMBER_INT);
-  foreach ($sanitoidutTiedot as $knimi => $kentta) {
-    if (strlen($kentta) < 3 || ($knimi != 'nimi' && !preg_match('/^\d+\.?\d+\/\d+$/', $kentta))) {
+  
+  $vaylat = array();
+  $vaylienHcp = array();
+  for ($i = 1; $i < 19; $i++) {
+    $par = $sanitoidutVaylat['vayla_' . $i . '_par'];
+    $hcp = $sanitoidutVaylat['vayla_' . $i . '_hcp'];
+    if (strlen($par) > 0 && strlen($hcp) > 0) {
+      $vaylat[$i] = array('par' => $par, 'hcp' => $hcp);
+      $vaylienHcp[] = (int)$hcp;
+    } else break;
+  }
+  
+  foreach ($sanitoidutTiedot as $knimi => $value) {
+    if (strlen($value) < 3 || ($knimi != 'nimi' && !preg_match('/^\d+\.?\d+\/\d+$/', $value))) {
       Atomik::flash("Kenttiä virheellisesti täytetty.", "error");
-      return array(false, $sanitoidutTiedot, $sanitoidutVaylat);
+      return array(false, $sanitoidutTiedot, $vaylat);
     }
   }
-  $vaylienPar = array();
-  $vaylienHcp = array();
-  foreach ($sanitoidutVaylat as $knimi => $kentta) {
-    if (strlen($kentta) === 0) break;
-    $knimiOsat = explode('_', $knimi);
-    if ($knimiOsat[2] == 'par') {
-      if ($kentta < 2 || $kentta > 6) {
-        Atomik::flash("Väylän numero " . $knimiOsat[1] . " par ei ole kelvollinen.", "error");
-        return array(false, $sanitoidutTiedot, $sanitoidutVaylat);
-      }
-      $vaylienPar[$knimiOsat[1]] = $kentta;
-    } else if ($knimiOsat[2] == 'hcp') $vaylienHcp[$knimiOsat[1]] = (int)$kentta;
-  }
-  $vaylienHcpCopy = $vaylienHcp;
-  sort($vaylienHcpCopy);
-  if (count($vaylienHcpCopy) == 0) {
+  
+  sort($vaylienHcp);
+  if (count($vaylienHcp) == 0) {
     Atomik::flash("Yhdenkään väylän tietoja ei annettu.", "error");
-    return array(false, $sanitoidutTiedot, $sanitoidutVaylat);
-  } else if ($vaylienHcpCopy !== range(1, count($vaylienHcpCopy))) {
+    return array(false, $sanitoidutTiedot, $vaylat);
+  } else if ($vaylienHcp !== range(1, count($vaylienHcp))) {
     Atomik::flash("HCP:t eivät täsmää.", "error");
-    return array(false, $sanitoidutTiedot, $sanitoidutVaylat);
+    return array(false, $sanitoidutTiedot, $vaylat);
   }
-  return array($sanitoidutTiedot, $sanitoidutVaylat, $vaylienPar, $vaylienHcp);
+  
+  return array($sanitoidutTiedot, $vaylat);
 }
 
 function tarkistaPelaajaSyote($post) {
