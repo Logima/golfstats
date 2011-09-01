@@ -1,31 +1,48 @@
 <?php
+$lisaa = false;
+if (!isset($_GET['pelaaja']) || Atomik_Db::count('pelaajat', array('id' => $_GET['pelaaja'])) != 1) {
+  $lisaa = true;
+}
 
-if (empty($_POST)) {
-  $kentat = Atomik_Db::find('pelaajat', array('id' => $_GET['pelaaja']));
-  $tasoituksetQuery = Atomik_Db::findAll('tasoitukset', array('pelaaja' => $_GET['pelaaja']));
-  $tasoitusMaara = 0;
-  foreach ($tasoituksetQuery->toArray() as $value) {
-    $kentat["tasoitus_" . $tasoitusMaara] = $value['tasoitus'];
-    $kentat["pvm_" . $tasoitusMaara] = date("j.n.Y", $value['lahtien']);
-    $tasoitusMaara++;
+$tasoitusMaara = 0;
+$tasoitukset = array();
+if (empty($_POST) && !$lisaa) {
+  $pelaajanTiedot = Atomik_Db::find('pelaajat', array('id' => $_GET['pelaaja']));
+  $tasoitukset = Atomik_Db::findAll('tasoitukset', array('pelaaja' => $_GET['pelaaja']), 'lahtien')->fetchAll();
+  foreach ($tasoitukset as $knimi => $tasoitus) {
+    $tasoitukset[$knimi]['lahtien'] = date("j.n.Y", $tasoitus['lahtien']);
   }
-} else {
+  $tasoitusMaara = count($tasoitukset);
+} elseif (!empty($_POST)) {
   Atomik::needed('filterit');
   $kentat = tarkistaPelaajaSyote($_POST);
   if ($kentat[0] !== false) {
-    if (Atomik_Db::update('pelaajat', array_slice($kentat[0], 0, 2), array('id' => $_GET['pelaaja']))) {
-      A('db:delete from tasoitukset where pelaaja = ?', array($_GET['pelaaja']));
-      foreach ($kentat[1] as $knimi => $value) {
-        Atomik_Db::insert('tasoitukset', array('pelaaja' => $_GET['pelaaja'], 'tasoitus' => $value, 'lahtien' => $kentat[2][$knimi]));
+    list($pelaajanTiedot, $tasoitukset) = $kentat;
+    $tasoitusMaara = count($tasoitukset);
+    if ($lisaa) {
+      $pelaajanId = Atomik_Db::insert('pelaajat', $pelaajanTiedot);
+      if (!$pelaajanId) {
+        Atomik::flash("Virhe lisättäessä pelaajaa " . $pelaajanTiedot['nimi'] . ".", "error");
+        $virhe = true;
       }
-      Atomik::flash("Pelaajan " . $kentat[0]['nimi'] . " muokkaus onnistui.");
-      Atomik::redirect('/pelaajat');
     } else {
-      Atomik::flash("Virhe muokattaessa pelaajaa " . $kentat[0]['nimi'] . ".", "error");
-      $tasoitusMaara = count($kentat[0])/2-1;
+      $pelaajanId = $_GET['pelaaja'];
+      if (!Atomik_Db::update('pelaajat', $pelaajanTiedot, array('id' => $pelaajanId))) {
+        Atomik::flash("Virhe muokattaessa pelaajaa " . $pelaajanTiedot['nimi'] . ".", "error");
+        $virhe = true;
+      }
+    }
+    
+    if (!isset($virhe)) {
+      A('db:delete from tasoitukset where pelaaja = ?', array($pelaajanId));
+      foreach ($tasoitukset as $tasoitus) {
+        Atomik_Db::insert('tasoitukset', array('pelaaja' => $pelaajanId, 'tasoitus' => $tasoitus['tasoitus'], 'lahtien' => strtotime($tasoitus['lahtien'])));
+      }
+      Atomik::flash("Pelaajan " . $pelaajanTiedot['nimi'] . (($lisaa)?" lisäys":" muokkaus") . " onnistui.");
+      Atomik::redirect('/pelaajat');
     }
   } else {
-    $tasoitusMaara = count($kentat[1])/2-1;
-    $kentat = $kentat[1];
+    list($pelaajanTiedot, $tasoitukset) = $kentat;
+    $tasoitusMaara = count($tasoitukset);
   }
 }

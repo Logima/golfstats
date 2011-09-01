@@ -41,34 +41,33 @@ function tarkistaKenttaSyote($post) {
 
 function tarkistaPelaajaSyote($post) {
   $post = filter_var_array($post, FILTER_SANITIZE_STRING);
-  $paivamaarat = array();
+  $pelaajanTiedot = array('nimi' => $post['nimi'], 'sukupuoli' => $post['sukupuoli']);
   $tasoitukset = array();
+  foreach ($post as $knimi => $value) {
+    if ($knimi == 'nimi' || $knimi == 'sukupuoli') continue;
+    $knimiOsat = explode('_', $knimi);
+    if (!isset($tasoitukset[$knimiOsat[1]])) $tasoitukset[$knimiOsat[1]] = array();
+    $tasoitukset[$knimiOsat[1]][$knimiOsat[0]] = $value;
+  }
+  
   foreach ($post as $knimi => $value) {
     if (strlen($value) == 0) {
       Atomik::flash("Kenttiä ei saa jättää tyhjiksi.", "error");
-      return array(false, $post);
-    }
-    if ($knimi == "nimi" || $knimi == "sukupuoli") continue;
-    $knimiOsat = explode('_', $knimi);
-    if ($knimiOsat[0] == "tasoitus") {
-      if (!preg_match('/^\d{1,2}(\.\d)?$/', $value)) {
-        Atomik::flash("Annettu tasoitus ei ole kelvollinen.", "error");
-        return array(false, $post);
-      } else {
-        $tasoitukset[$knimiOsat[1]] = $value;
-      }
-    }
-    if ($knimiOsat[0] == "pvm") {
-      $pvm = strtotime($value);
-      if ($pvm === false) {
-        Atomik::flash("Annettu päivämäärä ei ole kelvollinen.", "error");
-        return array(false, $post);
-      } else {
-        $paivamaarat[$knimiOsat[1]] = $pvm;
-      }
+      return array(false, $pelaajanTiedot, $tasoitukset);
     }
   }
-  return array($post, $tasoitukset, $paivamaarat);
+  
+  foreach ($tasoitukset as $tasoitus) {
+    if (strtotime($tasoitus['lahtien']) === false) {
+      Atomik::flash("Annettu päivämäärä ei ole kelvollinen.", "error");
+      return array(false, $pelaajanTiedot, $tasoitukset);
+    }
+    if (!preg_match('/^\d{1,2}(\.\d)?$/', $tasoitus['tasoitus'])) {
+      Atomik::flash("Annettu tasoitus ei ole kelvollinen.", "error");
+      return array(false, $pelaajanTiedot, $tasoitukset);
+    }
+  }
+  return array($pelaajanTiedot, $tasoitukset);
 }
 
 function tarkistaKierrosSyote($post) {

@@ -39,7 +39,7 @@ if (empty($_POST) && !$lisaa) {
         $viimeinenVayla = $vaylanNumero;
       }
       A('db:delete from kentan_vaylat where kentta = ? and numero > ?', array($kentanId, $viimeinenVayla));
-      Atomik::flash("Kentän " . $kentanTiedot['nimi'] . " muokkaus onnistui.");
+      Atomik::flash("Kentän " . $kentanTiedot['nimi'] . (($lisaa)?" lisäys":" muokkaus") . " onnistui.");
       Atomik::redirect('/kentat');
     }
   } else {
